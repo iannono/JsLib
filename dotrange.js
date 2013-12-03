@@ -1,5 +1,3 @@
-
-var dataset = [0, 9000, 21000, 60000, 100000]
 var dotrange = {};
 
 dotrange.init = function(ele, dataset, targetData){
@@ -16,11 +14,14 @@ dotrange.init = function(ele, dataset, targetData){
   var rangeSVG = d3.select(ele).append("svg");
   var rangeLine = rangeSVG.append("line")
                           .classed("range-line", true)
-                          .attr("x1", padding)
-                          .attr("y1", (svgHeight/2))
-                          .attr("x2", rangeWidth + padding)
-                          .attr("y2", (svgHeight/2))
-                          .attr("stroke-width", rangeHeight);
+                          .attr({
+                            "x1": padding,
+                            "y1": svgHeight/2,
+                            "x2": rangeWidth + padding,
+                            "y2": svgHeight/2,
+                            "stroke": "#8EC2F5",
+                            "stroke-width": rangeHeight
+                          });
 
   rangeSVG.selectAll(".range-circle-outer")
           .data(dataset)
@@ -47,7 +48,6 @@ dotrange.init = function(ele, dataset, targetData){
           .classed("range-circle-inner", true)
           .attr({
             "cx": function(d) {
-              console.log("xx");
               return xscale(d) + padding;
             },
             "cy": svgHeight/2,
@@ -67,7 +67,7 @@ dotrange.init = function(ele, dataset, targetData){
           .attr({
             "x": function(d, i){
               if (xscale(d) == 0) {
-                return xscale(d) + padding;
+                return xscale(d) + padding - 5;
               }
               else { 
                 return xscale(d) + padding - 15;
@@ -87,6 +87,4 @@ dotrange.init = function(ele, dataset, targetData){
                       targetX + ",2",
             "fill": "#ff8c05",
           });
-}
-
-dotrange.init("body", dataset, 90000);
+} 

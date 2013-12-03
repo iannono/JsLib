@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <title></title>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <style type="text/css">
-      .range-line {
-        background: gray;
-        stroke: #4499ee;
-      }
-    </style>
   </head>
   <body> 
     <script src="../dotrange.js" charset="utf-8"></script>
+    <script>
+      var dataset = [0, 9000, 21000, 60000, 100000];
+      dotrange.init("body", dataset, 90000);
+    </script>
   </body>
 </html>
