@@ -14,18 +14,23 @@ dotrange.init = function(_options){
     dataset: [0],
     targetData: 0,
     width: 800,
-    height: 20,
+    height: 60,
     padding: 20,
     rangeHeight: 4
   };
   options = _extend(options, _options);
-  options.rangeWidth = options.width - 40;
+  options.rangeWidth = options.width - 80;
 
   var xscale = d3.scale.linear()
                  .domain([0, d3.max(options.dataset)])
                  .range([0, options.rangeWidth]);
 
-  var rangeSVG = d3.select(options.ele).append("svg");
+  var rangeSVG = d3.select(options.ele)
+                   .append("svg")
+                   .attr({
+                     width: options.width,
+                     height: options.height
+                   });
   var rangeLine = rangeSVG.append("line")
                           .classed("range-line", true)
                           .attr({
@@ -93,12 +98,12 @@ dotrange.init = function(_options){
   var targetX = xscale(options.targetData) + options.padding;
   rangeSVG.append("polyline")
           .attr({
-            "points": (targetX - 7) + ",0 " + 
-                      (targetX + 7) + ",0 " + 
-                      (targetX + 7) + ",4 " + 
-                      (targetX) + ",8 " +
-                      (targetX - 7) + ",4 " + 
-                      (targetX - 7) + ",0",
+            "points": (targetX - 7) + "," + (options.height/2 - 10) + " " + 
+                      (targetX + 7) + "," + (options.height/2 - 10) + " " +
+                      (targetX + 7) + "," + (options.height/2 - 6) + " " + 
+                      (targetX) + "," + (options.height/2 - 2) + " " +
+                      (targetX - 7) + "," + (options.height/2 - 6) + " " + 
+                      (targetX - 7) + "," + (options.height/2 - 10),
             "fill": "#ff8c05",
           });
 } 
