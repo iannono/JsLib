@@ -1,38 +1,52 @@
 var dotrange = {};
 
-dotrange.init = function(ele, dataset, targetData){
-  var svgWidth = 800;
-  var rangeWidth = 760;
-  var svgHeight = 20;
-  var rangeHeight = 4;
-  var padding = 20;
+dotrange.init = function(_options){
+
+  var _extend = function(destination, source) {
+                  for (var property in source) {
+                    destination[property] = source[property];
+                  }
+                  return destination;
+                }
+
+  var options = {
+    ele: "body",
+    dataset: [0],
+    targetData: 0,
+    width: 800,
+    height: 20,
+    padding: 20,
+    rangeHeight: 4
+  };
+  options = _extend(options, _options);
+  options.rangeWidth = options.width - 40;
 
   var xscale = d3.scale.linear()
-                 .domain([0, d3.max(dataset)])
-                 .range([0, rangeWidth]);
+                 .domain([0, d3.max(options.dataset)])
+                 .range([0, options.rangeWidth]);
 
-  var rangeSVG = d3.select(ele).append("svg");
+  var rangeSVG = d3.select(options.ele).append("svg");
   var rangeLine = rangeSVG.append("line")
                           .classed("range-line", true)
                           .attr({
-                            "x1": padding,
-                            "y1": svgHeight/2,
-                            "x2": rangeWidth + padding,
-                            "y2": svgHeight/2,
+                            "x1": options.padding,
+                            "y1": options.height/2,
+                            "x2": options.rangeWidth + options.padding,
+                            "y2": options.height/2,
                             "stroke": "#8EC2F5",
-                            "stroke-width": rangeHeight
+                            "stroke-width": options.rangeHeight
                           });
 
   rangeSVG.selectAll(".range-circle-outer")
-          .data(dataset)
+          .data(options.dataset)
           .enter()
           .append("circle")
           .classed("range-circle-outer", true)
           .attr({
             "cx": function(d, i){
-              return xscale(d) + padding;
+              return xscale(d) + options.padding;
             },
-            "cy": svgHeight/2,
+            "cy": options.height/2,
             "r": function(d, i){
               return 6;
             },
@@ -42,15 +56,15 @@ dotrange.init = function(ele, dataset, targetData){
           });
 
   rangeSVG.selectAll(".range-circle-inner")
-          .data(dataset)
+          .data(options.dataset)
           .enter()
           .append("circle")
           .classed("range-circle-inner", true)
           .attr({
             "cx": function(d) {
-              return xscale(d) + padding;
+              return xscale(d) + options.padding;
             },
-            "cy": svgHeight/2,
+            "cy": options.height/2,
             "r": function(d, i){
               return 4;
             },
@@ -58,7 +72,7 @@ dotrange.init = function(ele, dataset, targetData){
           });
 
   rangeSVG.selectAll("text")
-          .data(dataset)
+          .data(options.dataset)
           .enter()
           .append("text")
           .text(function(d){
@@ -67,24 +81,24 @@ dotrange.init = function(ele, dataset, targetData){
           .attr({
             "x": function(d, i){
               if (xscale(d) == 0) {
-                return xscale(d) + padding - 5;
+                return xscale(d) + options.padding - 5;
               }
               else { 
-                return xscale(d) + padding - 15;
+                return xscale(d) + options.padding - 15;
               }
             },
-            "y": svgHeight/2 + 25
+            "y": options.height/2 + 25
           });
 
-  var targetX = xscale(targetData);
+  var targetX = xscale(options.targetData) + options.padding;
   rangeSVG.append("polyline")
           .attr({
-            "points": targetX + ",2 " + 
-                      (targetX + 14) + ",2 " + 
-                      (targetX + 14) + ",6 " + 
-                      (targetX + 7) + ",10 " +
-                      targetX + ",6 " + 
-                      targetX + ",2",
+            "points": (targetX - 7) + ",0 " + 
+                      (targetX + 7) + ",0 " + 
+                      (targetX + 7) + ",4 " + 
+                      (targetX) + ",8 " +
+                      (targetX - 7) + ",4 " + 
+                      (targetX - 7) + ",0",
             "fill": "#ff8c05",
           });
 } 
