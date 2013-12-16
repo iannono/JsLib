@@ -1,24 +1,29 @@
-var dotrange = {};
+var dotrange = {
 
-dotrange.init = function(_options){
+  _extend: function(destination, source) {
+             for (var property in source) {
+               destination[property] = source[property];
+             }
+             return destination;
+           }, 
+  _options: {
+              ele: "body",
+              dataset: [0],
+              targetData: 0,
+              width: 800,
+              height: 60,
+              padding: 20,
+              rangeHeight: 4
+            }
+};
 
-  var _extend = function(destination, source) {
-                  for (var property in source) {
-                    destination[property] = source[property];
-                  }
-                  return destination;
-                }
+dotrange.middle = function(options) {
 
-  var options = {
-    ele: "body",
-    dataset: [0],
-    targetData: 0,
-    width: 800,
-    height: 60,
-    padding: 20,
-    rangeHeight: 4
-  };
-  options = _extend(options, _options);
+}
+
+dotrange.normal = function(options){ 
+
+  options = this._extend(this._options, options);
   options.rangeWidth = options.width - 80;
 
   var xscale = d3.scale.linear()
