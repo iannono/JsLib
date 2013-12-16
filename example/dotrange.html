@@ -8,26 +8,40 @@
   <body> 
     <script src="../dotrange.js" charset="utf-8"></script>
     <script>
-      var dataset = [0, 9000, 21000, 60000, 100000];
+      var ds_middle = [3000, 8000, 9000, 18000, 80000,
+                      150000, 160000, 170000, 300000];
+      var tx_middle = ["低", "较低", "中等", "较高", "高"];
+      var ds_normal = [3000, 7000, 10000, 20000, 30000];
       dotrange.normal({
         ele: "body",
-        dataset: dataset,
+        dataset: ds_normal,
         targetData: 21000
       });
     </script>
 
-    <div id="small" >
-
-    </div>
+    <div id="small" > </div>
     <script>
       dotrange.normal({
         ele: "#small",
-        dataset: dataset,
-        targetData: 88000,
-        width: 400,
+        dataset: ds_normal,
+        targetData: 4000,
+        width: 500,
         height: 60,
         rangeHeight: 10
       });
+    </script>
+
+    <div id="middle"> </div>
+    <script>
+      dotrange.middle5({
+        ele: "#middle",
+        dataset: ds_middle,
+        targetData: 100000,
+        width: 800,
+        height: 60,
+        rangeHeight: 10,
+        textset: tx_middle
+      }); 
     </script>
   </body>
 </html>

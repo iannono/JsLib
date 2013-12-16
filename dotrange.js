@@ -9,19 +9,20 @@ var dotrange = function(){
       height: 60,
       padding: 20,
       rangeHeight: 4,
-      rangeWidth: 720
     }
   };
+
   var _extend =  function(destination, source) {
       for (var property in source) {
         destination[property] = source[property];
       }
+      destination.rangeWidth = destination.width - 80;
       return destination;
     };
 
   var _xscale = function(options){
     return d3.scale.linear()
-    .domain([0, d3.max(options.dataset)])
+    .domain([d3.min(options.dataset), d3.max(options.dataset)])
     .range([0, options.rangeWidth]); 
   };
 
@@ -47,6 +48,105 @@ var dotrange = function(){
     }); 
   }; 
 
+
+  dotrange.middle5 = function(options) {
+    var op = _extend(this._options, options);
+
+    var xscale = _xscale(op);
+    var rangeSVG = _rangeSVG(op);
+    var rangeLine = _rangeLine(op, rangeSVG); 
+    var ds = op.dataset;
+    var mid = low_q = high_q = 0;
+    var length = ds.length;
+
+    m_index = Math.floor(length/2);
+    low_q_index = Math.floor(length/4);
+    high_q_index = length - low_q_index - 1;
+    if (length % 2 === 0) {
+      mid = (ds[m_index] + ds[m_index + 1]) / 2; 
+      low_q = (ds[low_q_index] + ds[low_q_index + 1]) / 2;
+      high_q = (ds[high_q_index] + ds[high_q_index] + 1) / 2;
+    }
+    else {
+      mid = ds[m_index];
+      low_q = ds[low_q_index]
+      high_q = ds[high_q_index]
+    } 
+
+    var d5 = [0, 0, 0, 0, 0];
+
+    d5[0] = d3.min(op.dataset);
+    d5[1] = low_q;
+    d5[2] = mid;
+    d5[3] = high_q;
+    d5[4] = d3.max(op.dataset);
+
+    var ds_text = op.textset || ds;
+
+    console.log(low_q);
+    console.log(mid);
+    console.log(high_q);
+
+    rangeSVG.selectAll(".range-circle-outer")
+    .data(d5)
+    .enter()
+    .append("circle")
+    .classed("range-circle-outer", true)
+    .attr({
+      "cx": function(d, i){
+        return xscale(d) + op.padding;
+      },
+      "cy": op.height/2,
+      "r": function(d, i){
+        return 6;
+      },
+      "fill": "white",
+      "stroke": "#4499ee",
+      "stroke-width": "1"
+    });
+
+    rangeSVG.selectAll(".range-circle-inner")
+    .data(d5)
+    .enter()
+    .append("circle")
+    .classed("range-circle-inner", true)
+    .attr({
+      "cx": function(d) {
+        return xscale(d) + op.padding;
+      },
+      "cy": op.height/2,
+      "r": function(d, i){
+        return 4;
+      },
+      "fill": "#4499ee"
+    });
+
+    rangeSVG.selectAll("text")
+    .data(d5)
+    .enter()
+    .append("text")
+    .text(function(d, i){
+      return ds_text[i];
+    })
+    .attr({
+      "x": function(d, i){
+        if (xscale(d) == 0) {
+          return xscale(d) + op.padding - 15;
+        }
+        else { 
+          return xscale(d) + op.padding - 15;
+        }
+      },
+      "y": function(d, i){
+        if (i % 2 === 0) {
+          return op.height/2 - 10 
+        }
+        else {
+          return op.height/2 + 25 
+        }
+      }
+    });
+  }; 
 
   dotrange.normal = function(options){ 
 
