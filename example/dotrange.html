@@ -8,8 +8,7 @@
   <body> 
     <script src="../dotrange.js" charset="utf-8"></script>
     <script>
-      var ds_middle = [3000, 8000, 9000, 18000, 80000,
-                      150000, 160000, 170000, 300000];
+      var ds_middle = [0.1019, 0.1017, 0.1356, 0.1446, 0.1471, 0.1503, 0.1946, 0.2018];
       var tx_middle = ["低", "中", "高"];
       var ds_normal = [3000, 7000, 10000, 20000, 30000];
       dotrange.normal({
@@ -36,7 +35,7 @@
       dotrange.middle3({
         ele: "#middle",
         dataset: ds_middle,
-        targetData: 100000,
+        targetData: 0.1953,
         width: 1000,
         height: 60,
         rangeHeight: 6,

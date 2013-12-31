@@ -32,6 +32,19 @@ var dotrange = function(){
     .range([0, options.rangeWidth]); 
   };
 
+  var _parse_to_section = function(type, target, data) { 
+    console.log(data);
+    var result = "";
+    if(type == "middle3") { 
+      if(target <= data[0]) result = "低";
+      if(target == data[0]) result = "中等";
+      if(target > data[0] && target < data[1]) result = "中等偏下";
+      if(target > data[1] && target < data[2]) result = "中等偏上";
+      if(target > data[2]) result = "高";
+    }
+    return result;
+  }
+
   var _xscale_mid5 = function(options){
     return d3.scale.linear()
     .domain([d3.min(options.dataset) - d3.max(options.dataset) / 8, d3.max(options.dataset) + d3.max(options.dataset) / 8])
@@ -67,7 +80,7 @@ var dotrange = function(){
     var xscale = _xscale_mid3(op);
     var rangeSVG = _rangeSVG(op);
     var rangeLine = _rangeLine(op, rangeSVG); 
-    var ds = op.dataset;
+    var ds = op.dataset.sort(d3.ascending);
     var mid = low_q = high_q = 0;
     var length = ds.length;
 
@@ -77,11 +90,13 @@ var dotrange = function(){
     m3[1] = d3.quantile(ds, 0.5);
     m3[2] = d3.quantile(ds, 0.75);
 
-    var ds_text = op.textset || ds;
+    console.log(m3[0])
+    console.log(m3[1])
+    console.log(m3[2])
 
-    console.log(low_q);
-    console.log(mid);
-    console.log(high_q);
+    var result = _parse_to_section("middle3", op.targetData, m3)
+
+    var ds_text = op.textset || ds; 
 
     rangeSVG.append("circle")
     .classed("range-circle-start-outer", true)
@@ -161,21 +176,14 @@ var dotrange = function(){
     .data(m3)
     .enter()
     .append("text")
-    .text(function(d, i){
-      return ds_text[i];
+    .text(function(d){
+      return d;
     })
     .attr({
       "x": function(d, i){
-          return xscale(d) + op.padding - 10; 
+        return xscale(d) + op.padding - 20;
       },
-      "y": function(d, i){
-        if (i % 2 === 0) {
-          return op.height/2 - 10 
-        }
-        else {
-          return op.height/2 + 25 
-        }
-      }
+      "y": op.height/2 + 25
     });
 
     var targetX = xscale(op.targetData) + op.padding;
@@ -189,6 +197,15 @@ var dotrange = function(){
         (targetX - 7) + "," + (op.height/2 - 10),
       "fill": "#ff8c05",
     });
+    rangeSVG.append("text")
+    .text(op.targetData)
+    .attr({
+      "x": targetX - 20,
+      "y": op.height/2 + 25
+    });
+
+    console.log(result);
+    return result;
   }; 
 
   dotrange.middle5 = function(options) {
