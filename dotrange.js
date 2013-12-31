@@ -190,6 +190,18 @@ var dotrange = function(){
         }
       }
     });
+
+    var targetX = xscale(op.targetData) + op.padding;
+    rangeSVG.append("polyline")
+    .attr({
+      "points": (targetX - 7) + "," + (op.height/2 - 10) + " " + 
+        (targetX + 7) + "," + (op.height/2 - 10) + " " +
+        (targetX + 7) + "," + (op.height/2 - 6) + " " + 
+        (targetX) + "," + (op.height/2 - 2) + " " +
+        (targetX - 7) + "," + (op.height/2 - 6) + " " + 
+        (targetX - 7) + "," + (op.height/2 - 10),
+      "fill": "#ff8c05",
+    });
   }; 
 
   dotrange.normal = function(options){ 
