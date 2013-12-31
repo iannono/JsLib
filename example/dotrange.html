@@ -10,7 +10,7 @@
     <script>
       var ds_middle = [3000, 8000, 9000, 18000, 80000,
                       150000, 160000, 170000, 300000];
-      var tx_middle = ["低", "较低", "中等", "较高", "高"];
+      var tx_middle = ["低", "中", "高"];
       var ds_normal = [3000, 7000, 10000, 20000, 30000];
       dotrange.normal({
         ele: "body",
@@ -33,7 +33,7 @@
 
     <div id="middle"> </div>
     <script>
-      dotrange.middle5({
+      dotrange.middle3({
         ele: "#middle",
         dataset: ds_middle,
         targetData: 100000,

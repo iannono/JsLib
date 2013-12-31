@@ -26,6 +26,12 @@ var dotrange = function(){
     .range([0, options.rangeWidth]); 
   };
 
+  var _xscale_mid3 = function(options){
+    return d3.scale.linear()
+    .domain([d3.min(options.dataset), d3.max(options.dataset)])
+    .range([0, options.rangeWidth]); 
+  };
+
   var _xscale_mid5 = function(options){
     return d3.scale.linear()
     .domain([d3.min(options.dataset) - d3.max(options.dataset) / 8, d3.max(options.dataset) + d3.max(options.dataset) / 8])
@@ -55,43 +61,158 @@ var dotrange = function(){
   }; 
 
 
-  dotrange.middle5 = function(options) {
+  dotrange.middle3 = function(options) {
     var op = _extend(this._options, options);
 
-    var xscale = _xscale_mid5(op);
+    var xscale = _xscale_mid3(op);
     var rangeSVG = _rangeSVG(op);
     var rangeLine = _rangeLine(op, rangeSVG); 
     var ds = op.dataset;
     var mid = low_q = high_q = 0;
     var length = ds.length;
 
-    m_index = Math.floor(length/2);
-    low_q_index = Math.floor(length/4);
-    high_q_index = length - low_q_index - 1;
-    if (length % 2 === 0) {
-      mid = (ds[m_index] + ds[m_index + 1]) / 2; 
-      low_q = (ds[low_q_index] + ds[low_q_index + 1]) / 2;
-      high_q = (ds[high_q_index] + ds[high_q_index] + 1) / 2;
-    }
-    else {
-      mid = ds[m_index];
-      low_q = ds[low_q_index]
-      high_q = ds[high_q_index]
-    } 
+    var m3 = [0, 0, 0];
 
-    var d5 = [0, 0, 0, 0, 0];
-
-    d5[0] = d3.min(op.dataset);
-    d5[1] = low_q;
-    d5[2] = mid;
-    d5[3] = high_q;
-    d5[4] = d3.max(op.dataset);
+    m3[0] = d3.quantile(ds, 0.25);
+    m3[1] = d3.quantile(ds, 0.5);
+    m3[2] = d3.quantile(ds, 0.75);
 
     var ds_text = op.textset || ds;
 
     console.log(low_q);
     console.log(mid);
     console.log(high_q);
+
+    rangeSVG.append("circle")
+    .classed("range-circle-start-outer", true)
+    .attr({
+      "cx": op.padding,
+      "cy": op.height/2,
+      "r": 6,
+      "fill": "white",
+      "stroke": "red",
+      "stroke-width": "1"
+    })
+
+    rangeSVG.append("circle")
+    .classed("range-circle-start-inner", true)
+    .attr({
+      "cx": op.padding,
+      "cy": op.height/2,
+      "r": 4,
+      "fill": "red"
+    });
+    
+    rangeSVG.append("circle")
+    .classed("range-circle-end-outer", true)
+    .attr({
+      "cx": op.padding + op.rangeWidth,
+      "cy": op.height/2,
+      "r": 6,
+      "fill": "white",
+      "stroke": "red",
+      "stroke-width": "1"
+    })
+
+    rangeSVG.append("circle")
+    .classed("range-circle-start-inner", true)
+    .attr({
+      "cx": op.padding + op.rangeWidth,
+      "cy": op.height/2,
+      "r": 4,
+      "fill": "red"
+    });
+
+    rangeSVG.selectAll(".range-circle-outer")
+    .data(m3)
+    .enter()
+    .append("circle")
+    .classed("range-circle-outer", true)
+    .attr({
+      "cx": function(d, i){
+        return xscale(d) + op.padding;
+      },
+      "cy": op.height/2,
+      "r": function(d, i){
+        return 6;
+      },
+      "fill": "white",
+      "stroke": "#4499ee",
+      "stroke-width": "1"
+    });
+
+    rangeSVG.selectAll(".range-circle-inner")
+    .data(m3)
+    .enter()
+    .append("circle")
+    .classed("range-circle-inner", true)
+    .attr({
+      "cx": function(d) {
+        return xscale(d) + op.padding;
+      },
+      "cy": op.height/2,
+      "r": function(d, i){
+        return 4;
+      },
+      "fill": "#4499ee"
+    });
+
+    rangeSVG.selectAll("text")
+    .data(m3)
+    .enter()
+    .append("text")
+    .text(function(d, i){
+      return ds_text[i];
+    })
+    .attr({
+      "x": function(d, i){
+          return xscale(d) + op.padding - 10; 
+      },
+      "y": function(d, i){
+        if (i % 2 === 0) {
+          return op.height/2 - 10 
+        }
+        else {
+          return op.height/2 + 25 
+        }
+      }
+    });
+
+    var targetX = xscale(op.targetData) + op.padding;
+    rangeSVG.append("polyline")
+    .attr({
+      "points": (targetX - 7) + "," + (op.height/2 - 10) + " " + 
+        (targetX + 7) + "," + (op.height/2 - 10) + " " +
+        (targetX + 7) + "," + (op.height/2 - 6) + " " + 
+        (targetX) + "," + (op.height/2 - 2) + " " +
+        (targetX - 7) + "," + (op.height/2 - 6) + " " + 
+        (targetX - 7) + "," + (op.height/2 - 10),
+      "fill": "#ff8c05",
+    });
+  }; 
+
+  dotrange.middle5 = function(options) {
+    var op = _extend(this._options, options);
+
+    var xscale = _xscale_mid5(op);
+    var rangeSVG = _rangeSVG(op);
+    var rangeLine = _rangeLine(op, rangeSVG); 
+    var ds = op.dataset.sort(d3.ascending);
+    console.log(ds);
+    console.log(d3.quantile(ds, 0.5))
+    console.log(d3.quantile(ds, 0.25))
+    console.log(d3.quantile(ds, 0.75))
+
+
+    var d5 = [0, 0, 0, 0, 0];
+
+    d5[0] = d3.min(op.dataset);
+    d5[1] = d3.quantile(ds, 0.25);
+    d5[2] = d3.quantile(ds, 0.5);
+    d5[3] = d3.quantile(ds, 0.75);
+    d5[4] = d3.max(op.dataset);
+
+    var ds_text = op.textset || ds; 
 
     rangeSVG.append("circle")
     .classed("range-circle-start-outer", true)
