@@ -6,8 +6,9 @@ var dotrange = function(){
       dataset: [0],
       targetData: 0,
       width: 800,
-      height: 60,
+      height: 40,
       padding: 20,
+      padding_top: 10,
       rangeHeight: 4,
     }
   };
@@ -65,9 +66,9 @@ var dotrange = function(){
     .classed("range-line", true)
     .attr({
       "x1": options.padding,
-      "y1": options.height/2,
+      "y1": options.height/2 - options.padding_top,
       "x2": options.rangeWidth + options.padding,
-      "y2": options.height/2,
+      "y2": options.height/2 - options.padding_top,
       "stroke": "#8EC2F5",
       "stroke-width": options.rangeHeight
     }); 
@@ -76,13 +77,12 @@ var dotrange = function(){
 
   dotrange.middle3 = function(options) {
     var op = _extend(this._options, options);
+    op.top = op.height/2 - op.padding_top;
 
     var xscale = _xscale_mid3(op);
     var rangeSVG = _rangeSVG(op);
     var rangeLine = _rangeLine(op, rangeSVG); 
     var ds = op.dataset.sort(d3.ascending);
-    var mid = low_q = high_q = 0;
-    var length = ds.length;
 
     var m3 = [0, 0, 0];
 
@@ -102,7 +102,7 @@ var dotrange = function(){
     .classed("range-circle-start-outer", true)
     .attr({
       "cx": op.padding,
-      "cy": op.height/2,
+      "cy": op.top,
       "r": 6,
       "fill": "white",
       "stroke": "red",
@@ -113,7 +113,7 @@ var dotrange = function(){
     .classed("range-circle-start-inner", true)
     .attr({
       "cx": op.padding,
-      "cy": op.height/2,
+      "cy": op.top,
       "r": 4,
       "fill": "red"
     });
@@ -122,7 +122,7 @@ var dotrange = function(){
     .classed("range-circle-end-outer", true)
     .attr({
       "cx": op.padding + op.rangeWidth,
-      "cy": op.height/2,
+      "cy": op.top,
       "r": 6,
       "fill": "white",
       "stroke": "red",
@@ -133,7 +133,7 @@ var dotrange = function(){
     .classed("range-circle-start-inner", true)
     .attr({
       "cx": op.padding + op.rangeWidth,
-      "cy": op.height/2,
+      "cy": op.top,
       "r": 4,
       "fill": "red"
     });
@@ -147,7 +147,7 @@ var dotrange = function(){
       "cx": function(d, i){
         return xscale(d) + op.padding;
       },
-      "cy": op.height/2,
+      "cy": op.top,
       "r": function(d, i){
         return 6;
       },
@@ -165,7 +165,7 @@ var dotrange = function(){
       "cx": function(d) {
         return xscale(d) + op.padding;
       },
-      "cy": op.height/2,
+      "cy": op.top,
       "r": function(d, i){
         return 4;
       },
@@ -176,32 +176,36 @@ var dotrange = function(){
     .data(m3)
     .enter()
     .append("text")
-    .text(function(d){
-      return d;
+    .text(function(d, i){
+      return ds_text[i];
     })
     .attr({
       "x": function(d, i){
-        return xscale(d) + op.padding - 20;
+        return xscale(d) + op.padding - 10;
       },
-      "y": op.height/2 + 25
+      "y": function(d, i){
+        return op.top + 22
+      },
+      "font-size": 6
     });
 
     var targetX = xscale(op.targetData) + op.padding;
     rangeSVG.append("polyline")
     .attr({
-      "points": (targetX - 7) + "," + (op.height/2 - 10) + " " + 
-        (targetX + 7) + "," + (op.height/2 - 10) + " " +
-        (targetX + 7) + "," + (op.height/2 - 6) + " " + 
-        (targetX) + "," + (op.height/2 - 2) + " " +
-        (targetX - 7) + "," + (op.height/2 - 6) + " " + 
-        (targetX - 7) + "," + (op.height/2 - 10),
+      "points": (targetX - 7) + "," + (op.top - 10) + " " + 
+        (targetX + 7) + "," + (op.top - 10) + " " +
+        (targetX + 7) + "," + (op.top - 6) + " " + 
+        (targetX) + "," + (op.top - 2) + " " +
+        (targetX - 7) + "," + (op.top - 6) + " " + 
+        (targetX - 7) + "," + (op.top - 10),
       "fill": "#ff8c05",
     });
     rangeSVG.append("text")
     .text(op.targetData)
     .attr({
       "x": targetX - 20,
-      "y": op.height/2 + 25
+      "y": op.top + 22,
+      "font-size": 6
     });
 
     console.log(result);
@@ -210,6 +214,7 @@ var dotrange = function(){
 
   dotrange.middle5 = function(options) {
     var op = _extend(this._options, options);
+    op.top = op.height/2 - op.padding_top;
 
     var xscale = _xscale_mid5(op);
     var rangeSVG = _rangeSVG(op);
@@ -235,7 +240,7 @@ var dotrange = function(){
     .classed("range-circle-start-outer", true)
     .attr({
       "cx": op.padding,
-      "cy": op.height/2,
+      "cy": op.top,
       "r": 6,
       "fill": "white",
       "stroke": "red",
@@ -245,7 +250,7 @@ var dotrange = function(){
     .classed("range-circle-start-inner", true)
     .attr({
       "cx": op.padding,
-      "cy": op.height/2,
+      "cy": op.top,
       "r": 4,
       "fill": "red"
     });
@@ -254,7 +259,7 @@ var dotrange = function(){
     .classed("range-circle-end-outer", true)
     .attr({
       "cx": op.padding + op.rangeWidth,
-      "cy": op.height/2,
+      "cy": op.top,
       "r": 6,
       "fill": "white",
       "stroke": "red",
@@ -264,7 +269,7 @@ var dotrange = function(){
     .classed("range-circle-start-inner", true)
     .attr({
       "cx": op.padding + op.rangeWidth,
-      "cy": op.height/2,
+      "cy": op.top,
       "r": 4,
       "fill": "red"
     });
@@ -278,7 +283,7 @@ var dotrange = function(){
       "cx": function(d, i){
         return xscale(d) + op.padding;
       },
-      "cy": op.height/2,
+      "cy": op.top,
       "r": function(d, i){
         return 6;
       },
@@ -296,7 +301,7 @@ var dotrange = function(){
       "cx": function(d) {
         return xscale(d) + op.padding;
       },
-      "cy": op.height/2,
+      "cy": op.top,
       "r": function(d, i){
         return 4;
       },
@@ -321,10 +326,10 @@ var dotrange = function(){
       },
       "y": function(d, i){
         if (i % 2 === 0) {
-          return op.height/2 - 10 
+          return op.top - 10 
         }
         else {
-          return op.height/2 + 25 
+          return op.top + 25 
         }
       }
     });
@@ -332,12 +337,12 @@ var dotrange = function(){
     var targetX = xscale(op.targetData) + op.padding;
     rangeSVG.append("polyline")
     .attr({
-      "points": (targetX - 7) + "," + (op.height/2 - 10) + " " + 
-        (targetX + 7) + "," + (op.height/2 - 10) + " " +
-        (targetX + 7) + "," + (op.height/2 - 6) + " " + 
-        (targetX) + "," + (op.height/2 - 2) + " " +
-        (targetX - 7) + "," + (op.height/2 - 6) + " " + 
-        (targetX - 7) + "," + (op.height/2 - 10),
+      "points": (targetX - 7) + "," + (op.top - 10) + " " + 
+        (targetX + 7) + "," + (op.top - 10) + " " +
+        (targetX + 7) + "," + (op.top - 6) + " " + 
+        (targetX) + "," + (op.top - 2) + " " +
+        (targetX - 7) + "," + (op.top - 6) + " " + 
+        (targetX - 7) + "," + (op.top - 10),
       "fill": "#ff8c05",
     });
   }; 
@@ -345,6 +350,7 @@ var dotrange = function(){
   dotrange.normal = function(options){ 
 
     var op = _extend(this._options, options);
+    op.top = op.height/2 - op.padding_top;
 
     var xscale = _xscale_nor(op);
     var rangeSVG = _rangeSVG(op);
@@ -360,7 +366,7 @@ var dotrange = function(){
       "cx": function(d, i){
         return xscale(d) + op.padding;
       },
-      "cy": op.height/2,
+      "cy": op.top,
       "r": function(d, i){
         return 6;
       },
@@ -378,7 +384,7 @@ var dotrange = function(){
       "cx": function(d) {
         return xscale(d) + op.padding;
       },
-      "cy": op.height/2,
+      "cy": op.top,
       "r": function(d, i){
         return 4;
       },
@@ -401,18 +407,18 @@ var dotrange = function(){
           return xscale(d) + op.padding - 15;
         }
       },
-      "y": op.height/2 + 25
+      "y": op.top + 25
     });
 
     var targetX = xscale(op.targetData) + op.padding;
     rangeSVG.append("polyline")
     .attr({
-      "points": (targetX - 7) + "," + (op.height/2 - 10) + " " + 
-        (targetX + 7) + "," + (op.height/2 - 10) + " " +
-        (targetX + 7) + "," + (op.height/2 - 6) + " " + 
-        (targetX) + "," + (op.height/2 - 2) + " " +
-        (targetX - 7) + "," + (op.height/2 - 6) + " " + 
-        (targetX - 7) + "," + (op.height/2 - 10),
+      "points": (targetX - 7) + "," + (op.top - 10) + " " + 
+        (targetX + 7) + "," + (op.top - 10) + " " +
+        (targetX + 7) + "," + (op.top - 6) + " " + 
+        (targetX) + "," + (op.top - 2) + " " +
+        (targetX - 7) + "," + (op.top - 6) + " " + 
+        (targetX - 7) + "," + (op.top - 10),
       "fill": "#ff8c05",
     });
   };
