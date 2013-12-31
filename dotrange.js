@@ -20,9 +20,15 @@ var dotrange = function(){
       return destination;
     };
 
-  var _xscale = function(options){
+  var _xscale_nor = function(options){
     return d3.scale.linear()
     .domain([d3.min(options.dataset), d3.max(options.dataset)])
+    .range([0, options.rangeWidth]); 
+  };
+
+  var _xscale_mid5 = function(options){
+    return d3.scale.linear()
+    .domain([d3.min(options.dataset) - d3.max(options.dataset) / 8, d3.max(options.dataset) + d3.max(options.dataset) / 8])
     .range([0, options.rangeWidth]); 
   };
 
@@ -52,7 +58,7 @@ var dotrange = function(){
   dotrange.middle5 = function(options) {
     var op = _extend(this._options, options);
 
-    var xscale = _xscale(op);
+    var xscale = _xscale_mid5(op);
     var rangeSVG = _rangeSVG(op);
     var rangeLine = _rangeLine(op, rangeSVG); 
     var ds = op.dataset;
@@ -86,6 +92,44 @@ var dotrange = function(){
     console.log(low_q);
     console.log(mid);
     console.log(high_q);
+
+    rangeSVG.append("circle")
+    .classed("range-circle-start-outer", true)
+    .attr({
+      "cx": op.padding,
+      "cy": op.height/2,
+      "r": 6,
+      "fill": "white",
+      "stroke": "red",
+      "stroke-width": "1"
+    })
+    rangeSVG.append("circle")
+    .classed("range-circle-start-inner", true)
+    .attr({
+      "cx": op.padding,
+      "cy": op.height/2,
+      "r": 4,
+      "fill": "red"
+    });
+    
+    rangeSVG.append("circle")
+    .classed("range-circle-end-outer", true)
+    .attr({
+      "cx": op.padding + op.rangeWidth,
+      "cy": op.height/2,
+      "r": 6,
+      "fill": "white",
+      "stroke": "red",
+      "stroke-width": "1"
+    })
+    rangeSVG.append("circle")
+    .classed("range-circle-start-inner", true)
+    .attr({
+      "cx": op.padding + op.rangeWidth,
+      "cy": op.height/2,
+      "r": 4,
+      "fill": "red"
+    });
 
     rangeSVG.selectAll(".range-circle-outer")
     .data(d5)
@@ -152,7 +196,7 @@ var dotrange = function(){
 
     var op = _extend(this._options, options);
 
-    var xscale = _xscale(op);
+    var xscale = _xscale_nor(op);
     var rangeSVG = _rangeSVG(op);
     var rangeLine = _rangeLine(op, rangeSVG);
 
